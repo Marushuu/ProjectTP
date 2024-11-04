@@ -59,17 +59,6 @@ public class NewBehaviourScript : MonoBehaviour
 
         if (_starterAssetsInputs.shoot)
         {
-            if (hitTransform != null)
-            {
-                if (hitTransform.GetComponent<Target>() != null)
-                {
-                    hitTransform.GetComponent<Target>().TakeDamage(1);
-                }
-                else
-                {
-                    Debug.Log("Hit something that is not a target");
-                }
-            }
             _starterAssetsInputs.shoot = false;
         }
     }

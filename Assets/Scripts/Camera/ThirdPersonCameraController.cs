@@ -18,6 +18,10 @@ public class ThirdPersonCameraController : MonoBehaviour
     public float pitchMin = -35f; // Minimum pitch angle
     public float pitchMax = 35f; // Maximum pitch angle
 
+    [Header("Recoil Settings")]
+    public float recoilPitch = 0.5f;
+    public float recoilYaw = 0.25f;
+
     // Third Person Follow
     private CinemachineThirdPersonFollow thirdPersonFollow;
 
@@ -97,5 +101,11 @@ public class ThirdPersonCameraController : MonoBehaviour
 
         // Rotate player model along the x-axis
         playerModel.rotation = Quaternion.Euler(0, yaw, 0);
+    }
+
+    public void ApplyRecoil()
+    {
+        pitch -= Random.Range(0, recoilPitch);
+        yaw += Random.Range(-recoilYaw, recoilYaw);
     }
 }

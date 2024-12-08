@@ -1,4 +1,5 @@
 using Unity.Cinemachine;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Interactions;
@@ -8,13 +9,18 @@ public class ShootingController : MonoBehaviour
     [Header("Shooting Settings")]
     public float projectileSpeed = 20f;
     public float fireRate = 0.5f;
-    public float recoilAmount = 1f;
-    public float recoilSpeed = 5f;
+    public float recoilAmount = 2f;
+    public float recoilSpeed = 10f;
+
+    [Header("Audio Clips")]
+    public AudioClip[] gunshotSounds;
+
     [Header("References")]
     public LayerMask aimMask;
     public Transform gunObject;
     public Transform firePoint;
     public GameObject bulletPrefab;
+    public Transform playerCameraObject;
     public CinemachineCamera freelookCamera;
 
     private float nextFireTime;
@@ -90,9 +96,24 @@ public class ShootingController : MonoBehaviour
             firePoint.forward = shootPoint;
         }
 
+        if (gunshotSounds.Length > 0)
+        {
+            AudioClip gunshotSound = gunshotSounds[Random.Range(0, gunshotSounds.Length)];
+            AudioSource.PlayClipAtPoint(gunshotSound, firePoint.position);
+        }
+
         GameObject bullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
         Rigidbody rb = bullet.GetComponent<Rigidbody>();
         rb.AddForce(firePoint.forward * projectileSpeed, ForceMode.Impulse);
+
+        var cameraController = GetComponent<ThirdPersonCameraController>();
+        if (cameraController != null)
+        {
+            cameraController.ApplyRecoil();
+        }
+
+        CinemachineImpulseSource impulseSource = GetComponent<CinemachineImpulseSource>();
+        impulseSource.GenerateImpulseWithForce(3f);
     }
 
     private void ApplyRecoil()
@@ -100,6 +121,7 @@ public class ShootingController : MonoBehaviour
         Vector3 recoilDirection = -firePoint.forward * recoilAmount;
         currentRecoil = Vector3.Lerp(currentRecoil, recoilDirection, Time.deltaTime * recoilSpeed);
 
+        // Recoil to Gun Object
         Quaternion targetRotation = currentGunRotation * Quaternion.Euler(-recoilAmount, 0, 0);
         gunObject.localRotation = Quaternion.Slerp(gunObject.localRotation, targetRotation, Time.deltaTime * recoilSpeed);
     }

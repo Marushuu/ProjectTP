@@ -10,7 +10,8 @@ public class ThirdPersonCameraController : MonoBehaviour
     public CinemachineCamera freeLookCamera;
 
     [Header("Input Settings")]
-    public Transform player;
+    public Transform playerCameraObject;
+    public Transform playerModel;
     public float mouseSensitivity = 25f;
 
     [Header("Rotation Limits")]
@@ -40,20 +41,6 @@ public class ThirdPersonCameraController : MonoBehaviour
         freeLookAction = InputSystem.actions.FindAction("Free Look");
 
         thirdPersonFollow = thirdPersonCamera.GetComponent<CinemachineThirdPersonFollow>();
-    }
-
-    private void OnEnable()
-    {
-        lookAction.Enable();
-        aimAction.Enable();
-        freeLookAction.Enable();
-    }
-
-    private void OnDisable()
-    {
-        lookAction.Disable();
-        aimAction.Disable();
-        freeLookAction.Disable();
     }
 
     private void Update()
@@ -105,7 +92,10 @@ public class ThirdPersonCameraController : MonoBehaviour
         // Clamp pitch value
         pitch = Mathf.Clamp(pitch, pitchMin, pitchMax);
 
-        // Rotate player along the y-axis
-        player.rotation = Quaternion.Euler(pitch, yaw, 0);
+        // Rotate camera along the x and y-axis
+        playerCameraObject.rotation = Quaternion.Euler(pitch, yaw, 0);
+
+        // Rotate player model along the x-axis
+        playerModel.rotation = Quaternion.Euler(0, yaw, 0);
     }
 }

@@ -4553,11 +4553,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 275526290428468682, guid: aa903b6a502229a4ab3958a4af677ca3, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 275526290428468682, guid: aa903b6a502229a4ab3958a4af677ca3, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1707470369493003409, guid: aa903b6a502229a4ab3958a4af677ca3, type: 3}
       propertyPath: m_Pivot.x

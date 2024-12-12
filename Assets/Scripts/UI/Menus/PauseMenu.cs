@@ -1,4 +1,3 @@
-using StarterAssets;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -28,7 +27,6 @@ public class PauseMenu : MonoBehaviour
     public void Resume()
     {
         Cursor.lockState = CursorLockMode.Locked;
-        player.GetComponent<ThirdPersonController>().enabled = true;
         pauseMenuUI.SetActive(false);
         playerUI.SetActive(true);
         Time.timeScale = 1f;
@@ -38,7 +36,6 @@ public class PauseMenu : MonoBehaviour
     void Pause()
     {
         Cursor.lockState = CursorLockMode.None;
-        player.GetComponent<ThirdPersonController>().enabled = false;
         pauseMenuUI.SetActive(true);
         playerUI.SetActive(false);
         Time.timeScale = 0f;

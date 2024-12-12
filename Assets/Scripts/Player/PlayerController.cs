@@ -12,7 +12,6 @@ public class PlayerController : MonoBehaviour
     [Header("Crouch Settings")]
     public float crouchHeight = 0.5f;
     public float standHeight = 1f;
-    public float crouchTransitionSpeed = 5f;
 
     [Header("Gravity and Grounding")]
     public float jumpHeight = 5f;
@@ -20,10 +19,17 @@ public class PlayerController : MonoBehaviour
     public float groundOffset = 0.4f;
     public LayerMask groundMask;
 
-    [Header("Audio Clips")]
+    [Header("Sound Settings")]
     public AudioClip jumpSound;
     public AudioClip landSound;
+    public AudioSource footstepSource;
     public AudioClip[] footstepSounds;
+    public AudioClip[] crouchSounds;
+    public AudioClip[] runningSounds;
+    public float walkStepInterval = 0.5f;
+    public float crouchStepInterval = 0.7f;
+    public float sprintStepInterval = 0.3f;
+    public float velocityThreshold = 2.0f;
 
     [Header("References")]
     public Transform cameraTransform;
@@ -35,6 +41,8 @@ public class PlayerController : MonoBehaviour
 
     private CharacterController characterController;
     private Vector3 playerVelocity;
+    private float nextStepTime;
+    private int lastPlayedIndex = -1;
     private bool isGrounded;
     private bool isSprinting = false;
     private bool isCrouching = false;
@@ -68,6 +76,7 @@ public class PlayerController : MonoBehaviour
         StateHandler();
         HandleCrouch();
         HandleMovement();
+        HandleFootsteps();
         HandleGravity();
         HandleJump();
         if (freelookCamera.Priority < 15)
@@ -129,6 +138,51 @@ public class PlayerController : MonoBehaviour
                 transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 10f);
             }
         }
+    }
+
+    private void HandleFootsteps()
+    {
+        float currentStepInterval = 0f;
+
+        switch (movementState)
+        {
+            case MovementState.Walking:
+                currentStepInterval = walkStepInterval;
+                break;
+            case MovementState.Sprinting:
+                currentStepInterval = sprintStepInterval;
+                break;
+            case MovementState.Crouching:
+                currentStepInterval = crouchStepInterval;
+                break;
+        }
+
+        if (isGrounded && Time.time > nextStepTime && characterController.velocity.magnitude > velocityThreshold)
+        {
+            PlayFootStepSounds();
+            nextStepTime = Time.time + currentStepInterval;
+        }
+    }
+
+    private void PlayFootStepSounds()
+    {
+        int randomIndex;
+        if (footstepSounds.Length == 1)
+        {
+            randomIndex = 0;
+        }
+        else
+        {
+            randomIndex = Random.Range(0, footstepSounds.Length - 1);
+            if (randomIndex >= lastPlayedIndex)
+            {
+                randomIndex++;
+            }
+        }
+
+        lastPlayedIndex = randomIndex;
+        footstepSource.clip = footstepSounds[randomIndex];
+        footstepSource.Play();
     }
 
     private void HandleGravity()

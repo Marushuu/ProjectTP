@@ -43,13 +43,14 @@ public class UnitHealth
         currentHealth -= damage;
         if (currentHealth <= 0)
         {
+            currentHealth = 0;
             Die();
         }
     }
 
     public void Heal(int healAmount)
     {
-        if (currentHealth > maxHealth)
+        if (currentHealth >= maxHealth)
         {
             currentHealth = maxHealth;
         }
@@ -61,6 +62,5 @@ public class UnitHealth
 
     public void Die()
     {
-        Debug.Log("I'm dead!");
     }
 }

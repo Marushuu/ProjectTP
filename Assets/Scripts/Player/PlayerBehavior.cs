@@ -2,7 +2,21 @@ using UnityEngine;
 
 public class PlayerBehavior : MonoBehaviour, IDataPersistence
 {
-    public UnitHealth _playerHealth = new UnitHealth(100, 100);
+    [SerializeField]
+    public int currentHealth = 200;
+    public int maxHealth = 200;
+    public int change = 10;
+    public int score = 0; // Added for the sake of time
+    public Canvas gameOverCanvas;
+
+    public UnitHealth _playerHealth;
+
+    void Start()
+    {
+        _playerHealth = new UnitHealth(currentHealth, maxHealth);
+        currentHealth = _playerHealth.Health;
+        maxHealth = _playerHealth.MaxHealth;
+    }
 
     public void LoadGameData(GameData data)
     {
@@ -18,17 +32,19 @@ public class PlayerBehavior : MonoBehaviour, IDataPersistence
 
     void Update()
     {
+        currentHealth = _playerHealth.Health;
+        maxHealth = _playerHealth.MaxHealth;
         if (_playerHealth.Health <= 0)
         {
             Die();
         }
-        if (Input.GetKeyDown(KeyCode.Q))
+        if (Input.GetKeyDown(KeyCode.T))
         {
-            Heal(10);
+            Heal(change);
         }
-        if (Input.GetKeyDown(KeyCode.E))
+        if (Input.GetKeyDown(KeyCode.Y))
         {
-            TakeDamage(10);
+            TakeDamage(change);
         }
         if (Input.GetKeyDown(KeyCode.F5))
         {
@@ -54,8 +70,16 @@ public class PlayerBehavior : MonoBehaviour, IDataPersistence
 
     public void Die()
     {
-        _playerHealth.Die();
-        Debug.Log("Player is dead");
+        Time.timeScale = 0;
+        gameOverCanvas.gameObject.SetActive(true);
     }
 
+    void OnTriggerEnter(Collider other)
+    {
+        if (other.GetComponent<EnemyHealth>() != null)
+        {
+            Debug.Log("Player hit");
+            TakeDamage(5);
+        }
+    }
 }
